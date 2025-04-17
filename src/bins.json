@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "type": ["papel", "carton"],
+    "name": "Papelera Azul - Plaza Mayor",
+    "lat": 40.416775,
+    "lng": -3.70379,
+    "address": "Plaza Mayor, Madrid"
+  },
+  {
+    "id": 2,
+    "type": ["vidrio"],
+    "name": "Contenedor Verde - Calle Gran Vía",
+    "lat": 40.4200,
+    "lng": -3.7060,
+    "address": "Calle Gran Vía, Madrid"
+  },
+  {
+    "id": 3,
+    "type": ["envases", "plastico"],
+    "name": "Contenedor Amarillo - Calle Alcalá",
+    "lat": 40.4190,
+    "lng": -3.6997,
+    "address": "Calle Alcalá, Madrid"
+  },
+  {
+    "id": 4,
+    "type": ["organico"],
+    "name": "Contenedor Marrón - Calle Atocha",
+    "lat": 40.4100,
+    "lng": -3.6940,
+    "address": "Calle Atocha, Madrid"
+  },
+  {
+    "id": 5,
+    "type": ["pilas"],
+    "name": "Punto de Pilas - Calle Fuencarral",
+    "lat": 40.4250,
+    "lng": -3.7020,
+    "address": "Calle Fuencarral, Madrid"
+  }
+]
