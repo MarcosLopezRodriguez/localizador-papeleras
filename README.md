@@ -1,63 +1,51 @@
-# Getting Started with Create React App
+# Localizador de Papeleras de Reciclaje
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Aplicación web interactiva para localizar papeleras y contenedores de reciclaje en tu ciudad.
 
-## Available Scripts
+## Descripción
 
-In the project directory, you can run:
+Este proyecto permite visualizar, buscar y filtrar papeleras de reciclaje sobre un mapa interactivo. Incluye selección visual de papeleras, filtrado por tipo de residuo, distrito y barrio, así como geolocalización automática para centrar el mapa y mostrar los contenedores más cercanos.
 
-### `npm start`
+## Características principales
+- **Mapa interactivo** con marcadores personalizados para cada tipo de papelera.
+- **Lista de papeleras** sincronizada con el mapa: al seleccionar en el mapa, se resalta la tarjeta correspondiente y viceversa.
+- **Filtros dinámicos** por tipo de residuo, distrito y barrio.
+- **Geolocalización**: detecta tu ubicación, centra el mapa y filtra automáticamente por barrio y distrito.
+- **Diseño responsive** y moderno con Material UI.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Instalación
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/tuusuario/localizador-papeleras.git
+   cd localizador-papeleras
+   ```
+2. Instala las dependencias:
+   ```bash
+   npm install
+   ```
+3. Inicia la aplicación en modo desarrollo:
+   ```bash
+   npm start
+   ```
+   Accede a [http://localhost:3000](http://localhost:3000)
 
-### `npm test`
+## Dependencias principales
+- [React](https://reactjs.org/)
+- [React Leaflet](https://react-leaflet.js.org/)
+- [Material UI](https://mui.com/)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Estructura del proyecto
+- `src/App.js`: Componente principal, lógica de mapa, filtros y geolocalización.
+- `src/BinList.js`: Renderizado y scroll automático de la lista de papeleras.
+- `src/binIcons.js`: Iconos personalizados para cada tipo de papelera.
+- `public/data/contenedores.json`: Datos de ubicación de papeleras.
 
-### `npm run build`
+## Personalización
+Puedes adaptar los datos de `contenedores.json` para tu ciudad, añadiendo o modificando tipos, distritos y barrios.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
+## Licencia
+MIT
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
