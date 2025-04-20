@@ -1,0 +1,36 @@
+[
+  {
+    "nombre": "ARGANZUELA",
+    "barrios": [
+      "ACACIAS",
+      "CHOPERA",
+      "DELICIAS",
+      "IMPERIAL",
+      "LEGAZPI",
+      "PALOS DE MOGUER",
+      "LAS DELICIAS"
+    ]
+  },
+  {
+    "nombre": "CENTRO",
+    "barrios": [
+      "EMBAJADORES",
+      "CORTES",
+      "JUSTICIA",
+      "UNIVERSIDAD",
+      "PALACIO",
+      "SOL"
+    ]
+  },
+  {
+    "nombre": "SALAMANCA",
+    "barrios": [
+      "RECOLETOS",
+      "CASTELLANA",
+      "GOYA",
+      "LISTA",
+      "GUINDALERA",
+      "FUENTE DEL BERRO"
+    ]
+  }
+]

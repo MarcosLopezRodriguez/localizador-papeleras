@@ -18,8 +18,10 @@ const typeLabels = {
 };
 
 function getAvatar(type) {
-  const label = typeLabels[type]?.label || type.charAt(0).toUpperCase();
-  const color = typeLabels[type]?.color || '#bbb';
+  const label =
+    typeLabels[type]?.label ||
+    (typeof type === "string" && type.length > 0 ? type.charAt(0).toUpperCase() : "?");
+  const color = typeLabels[type]?.color || "#bbb";
   return (
     <Avatar sx={{ bgcolor: color, width: 40, height: 40 }}>
       {typeLabels[type]?.icon || label[0]}
@@ -27,8 +29,7 @@ function getAvatar(type) {
   );
 }
 
-
-export default function BinList({ bins, selectedTypes, onBinClick, selectedId }) {
+export default function BinList({ bins, onBinClick, selectedId }) {
   const cardRefs = useRef({});
 
   useEffect(() => {
@@ -36,61 +37,62 @@ export default function BinList({ bins, selectedTypes, onBinClick, selectedId })
       cardRefs.current[selectedId].scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }, [selectedId]);
-  const filtered = bins;
-  return (
-    <div>
-      {filtered.length === 0 ? (
-        <p style={{ color: '#888', fontStyle: 'italic', textAlign: 'center' }}>
-          Selecciona un tipo de papelera para ver resultados.
-        </p>
-      ) : (
-        <Grid container spacing={2} alignItems="center" sx={{ width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
-          {filtered.map((bin) => {
-            const mainType = (bin.type && bin.type[0]) || 'resto';
-            return (
-              <Grid item xs={12} key={bin.id} ref={el => cardRefs.current[bin.id] = el} >
-                <Card
-                  onClick={() => onBinClick && onBinClick(bin)}
-                  tabIndex={onBinClick ? 0 : undefined}
-                  sx={{
-                    cursor: onBinClick ? 'pointer' : 'default',
-                    transition: 'box-shadow 0.2s',
-                    borderRadius: 2,
-                    border: bin.id === selectedId ? '2.5px solid #1976d2' : '1.2px solid #e3e8ee',
-                    boxShadow: bin.id === selectedId ? '0 4px 18px #1976d255' : '0 2px 12px rgba(40,44,52,0.07)',
-                    background: '#f7fafc',
-                    minHeight: 180,
-                    maxWidth: 340,
-                    mx: 'auto',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    p: 1.2
-                  }}
-                >
-                  <CardHeader
-                    avatar={getAvatar(mainType)}
-                    title={<Typography variant="h6" sx={{ fontWeight: 700, color: '#234', textAlign: 'center' }}>{bin.name || bin.direccion}</Typography>}
-                    subheader={<Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>{bin.address || bin.direccion}</Typography>}
-                    sx={{ pb: 0 }}
-                  />
-                  <CardContent sx={{ pt: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <Tooltip title="Ubicación exacta">
-                        <LocationOnIcon fontSize="small" sx={{ color: '#1976d2', mr: .5 }} />
-                      </Tooltip>
-                      <Typography variant="body2" color="text.secondary">
-                        Distrito: <b>{bin.distrito}</b> | Barrio: <b>{bin.barrio}</b>
-                      </Typography>
-                    </Box>
 
-                  </CardContent>
-                </Card>
-              </Grid>
-            );
-          })}
-        </Grid>
-      )}
-    </div>
+  if (!bins || bins.length === 0) {
+    return <p style={{ color: '#888', fontStyle: 'italic', textAlign: 'center' }}>No hay papeleras para mostrar.</p>;
+  }
+
+  return (
+    <Grid container direction="column" spacing={2}>
+      {bins.map((bin) => {
+        // Si el campo type es array, usamos el primero como tipo principal
+        const mainType = Array.isArray(bin.type) ? bin.type[0] : bin.type;
+        return (
+          <Grid item key={bin.id} ref={el => cardRefs.current[bin.id] = el}>
+            <Card
+              sx={{
+                mb: 1,
+                border: selectedId === bin.id ? '2px solid #1976d2' : '1px solid #f0f0f0',
+                boxShadow: selectedId === bin.id ? '0 0 8px #1976d2aa' : '0 2px 8px #eee',
+                cursor: 'pointer',
+                transition: 'box-shadow 0.2s',
+                maxWidth: 340,
+                mx: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                p: 1.2
+              }}
+              onClick={() => onBinClick(bin)}
+            >
+              <CardHeader
+                avatar={getAvatar(mainType)}
+                title={
+                  <Typography variant="h6" sx={{ fontWeight: 700, color: '#234', textAlign: 'center' }}>
+                    {bin.name || bin.direccion}
+                  </Typography>
+                }
+                subheader={
+                  <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+                    {bin.address || bin.direccion}
+                  </Typography>
+                }
+                sx={{ pb: 0 }}
+              />
+              <CardContent sx={{ pt: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                  <Tooltip title="Ubicación exacta">
+                    <LocationOnIcon fontSize="small" sx={{ color: '#1976d2', mr: .5 }} />
+                  </Tooltip>
+                  <Typography variant="body2" color="text.secondary">
+                    Distrito: <b>{bin.distrito}</b> | Barrio: <b>{bin.barrio}</b>
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        );
+      })}
+    </Grid>
   );
 }

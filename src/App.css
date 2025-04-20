@@ -1,79 +1,107 @@
-.App {
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  background: #f8fafb;
+}
+
+.header-gradient {
+  width: 100%;
+  background: linear-gradient(90deg, #1ca7ec 0%, #1cd8d2 100%);
+  color: #fff;
+  padding: 2rem 0 1rem 0;
   text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.header-gradient h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  font-weight: 700;
+}
+.header-gradient h2 {
+  font-size: 1.8rem;
+  margin: 0.4em 0 0.2em 0;
+  font-weight: 500;
+}
+.header-gradient p {
+  margin: 0.5em 0 0 0;
+  font-size: 1.15rem;
+  color: #e0f7fa;
+}
+
+.filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  justify-content: center;
+  align-items: center;
+  margin: 2em 0 1em 0;
+}
+.filters-bar .MuiChip-root {
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0.5em 1.2em;
+  border-radius: 22px;
+  box-shadow: 0 2px 8px rgba(28,215,210,0.08);
+}
+
+.controls-bar {
+  display: flex;
+  gap: 1em;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1em;
+}
+
+.main-layout {
+  display: flex;
+  gap: 2em;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 1300px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.list-panel {
+  width: 340px;
+  max-height: 80vh;
+  overflow-y: auto;
   background: #fff;
-  min-height: 100vh;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(40,44,52,0.08);
+  padding: 1.2em 0.6em;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+@media (max-width: 1000px) {
+  .main-layout {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1em;
+  }
+  .list-panel {
+    width: 100%;
+    max-width: 100vw;
+    max-height: 300px;
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 80px;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  color: white;
-  padding: 2rem 0 1rem 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-.main-content {
-  width: 100%;
-  max-width: 900px;
-  margin: 2em auto 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2em;
-}
-
-.map-wrapper {
-  width: 100%;
-  max-width: 900px;
-  height: 400px;
-  margin-bottom: 2em;
-  border-radius: 12px;
+.map-panel {
+  flex: 1;
+  min-width: 320px;
+  height: 80vh;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(40,44,52,0.08);
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(40,44,52,0.08);
 }
 
 @media (max-width: 700px) {
-  .main-content, .map-wrapper {
-    max-width: 100vw;
-    min-width: 0;
-  }
-  .map-wrapper {
-    height: 260px;
+  .map-panel {
+    height: 340px;
   }
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Aquí puedes agregar estilos específicos para el mapa o la barra de herramientas de tu aplicación */
 .map-container {
   margin-top: 1rem;
   height: 90vh;

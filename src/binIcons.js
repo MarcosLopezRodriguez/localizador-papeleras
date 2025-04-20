@@ -5,16 +5,14 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import BatteryFullIcon from '@mui/icons-material/BatteryFull';
 import ReactDOMServer from 'react-dom/server';
 
-// Mismo mapeo que en BinList.js
-const typeLabels = {
-  papel: { color: "#2196f3", icon: RecyclingIcon },
-  carton: { color: "#2196f3", icon: RecyclingIcon }, // Azul igual que papel
-  vidrio: { color: "#4caf50", icon: GlassIcon },
-  envases: { color: "#ffe082", icon: RecyclingIcon }, // Amarillo suave
-  plastico: { color: "#ffe082", icon: RecyclingIcon }, // Amarillo suave
-  organico: { color: "#795548", icon: DeleteOutlineIcon }, // Marrón
-  pilas: { color: "#f44336", icon: BatteryFullIcon },
-  resto: { color: "#888", icon: DeleteOutlineIcon } // Gris
+// Corrección del tipo "ENVASES/PLÁSTICO" a solo "ENVASES"
+export const typeLabels = {
+  papel: { label: "Papel/Cartón", color: "#1E88E5", icon: RecyclingIcon },
+  vidrio: { label: "Vidrio", color: "#43A047", icon: GlassIcon },
+  envases: { label: "Envases", color: "#FFB300", icon: RecyclingIcon },
+  organico: { label: "Orgánico", color: "#6D4C41", icon: DeleteOutlineIcon },
+  pilas: { label: "Pilas", color: "#E53935", icon: BatteryFullIcon },
+  resto: { label: "Resto", color: "#757575", icon: DeleteOutlineIcon }
 };
 
 export function getBinIcon(type, selected = false) {
@@ -37,7 +35,7 @@ export function getBinIcon(type, selected = false) {
     ">${svgString}</div>`,
     className: `bin-icon-${t}${selected ? ' selected' : ''}`,
     iconSize: [size, size],
-    iconAnchor: [size/2, size],
+    iconAnchor: [size / 2, size],
     popupAnchor: [0, -size]
   });
 }
