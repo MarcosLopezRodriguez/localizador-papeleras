@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import './App.css';
 import BinList from './BinList';
 import { getBinIcon, typeLabels } from './binIcons';
-import { Button, Chip, Select, MenuItem, InputLabel, FormControl, Box } from '@mui/material';
+import { Button, Chip, Select, MenuItem, InputLabel, FormControl, Box, TextField } from '@mui/material';
 import { Nature, Description, LocalDrink, Delete, Recycling } from '@mui/icons-material';
 
 const DEFAULT_CENTER = [40.416775, -3.70379];
@@ -19,6 +19,7 @@ export default function App() {
   const [selectedBinId, setSelectedBinId] = useState(null);
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   const [mapZoom, setMapZoom] = useState(14);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetch(process.env.PUBLIC_URL + '/data/contenedores.json')
@@ -97,7 +98,14 @@ export default function App() {
   }, [selectedBinId]);
 
   const filteredBins = bins.filter(bin => {
+    const query = searchQuery.toLowerCase();
+    const matchesSearchQuery = !query ||
+      (bin.direccion && bin.direccion.toLowerCase().includes(query)) ||
+      (bin.distrito && bin.distrito.toLowerCase().includes(query)) ||
+      (bin.barrioNorm && bin.barrioNorm.toLowerCase().includes(query));
+
     return (
+      matchesSearchQuery &&
       (!selectedDistrict || bin.distrito === selectedDistrict) &&
       (!selectedBarrio || bin.barrioNorm === selectedBarrio) &&
       (selectedTypes.length === 0 || (Array.isArray(bin.tipo) && bin.tipo.some(type => selectedTypes.includes(type))))
@@ -132,6 +140,35 @@ export default function App() {
 
   const handleDistrictChange = e => setSelectedDistrict(e.target.value);
   const handleBarrioChange = e => setSelectedBarrio(e.target.value);
+  const handleSearchChange = e => setSearchQuery(e.target.value);
+
+  const handleAddressSearch = async (event) => {
+    if (event.key === 'Enter' && searchQuery.trim() !== '') {
+      const encodedQuery = encodeURIComponent(searchQuery);
+      // Restrict search to Madrid area (Spain) for better relevance
+      const apiUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodedQuery}&viewbox=-4.5,40.0,-3.0,40.8&bounded=1`;
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error(`Nominatim request failed: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        if (data && data.length > 0) {
+          const { lat, lon } = data[0];
+          console.log('Nominatim result:', data[0]);
+          setMapCenter([parseFloat(lat), parseFloat(lon)]);
+          setMapZoom(16); // Zoom in to the geocoded address
+          setSelectedDistrict(''); // Clear district filter
+          setSelectedBarrio(''); // Clear barrio filter
+        } else {
+          alert('No se encontraron resultados para la dirección ingresada.');
+        }
+      } catch (error) {
+        console.error('Error fetching from Nominatim:', error);
+      }
+    }
+  };
+
   const handleTypeToggle = type => {
     setSelectedTypes(prev => prev.includes(type)
       ? prev.filter(t => t !== type)
@@ -158,6 +195,15 @@ export default function App() {
         <h1>Localizador de Papeleras</h1>
       </div>
       <div className="controls-bar">
+        <TextField
+          label="Buscar Dirección o Zona"
+          variant="outlined"
+          size="small"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          onKeyPress={handleAddressSearch}
+          sx={{ minWidth: 200, marginRight: 2 }}
+        />
         <FormControl size="small" sx={{ minWidth: 160 }}>
           <InputLabel>Distrito</InputLabel>
           <Select value={selectedDistrict} onChange={handleDistrictChange}>
@@ -198,7 +244,12 @@ export default function App() {
                 borderRadius: '8px',
                 boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                 cursor: 'pointer',
-                backgroundColor: selectedBinId === bin.id ? '#f0f8ff' : 'white',
+                backgroundColor: selectedBinId === bin.id ? '#f0f8ff' : 
+                                 (searchQuery && (
+                                   (bin.direccion && bin.direccion.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                                   (bin.distrito && bin.distrito.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                                   (bin.barrioNorm && bin.barrioNorm.toLowerCase().includes(searchQuery.toLowerCase()))
+                                 )) ? 'lightyellow' : 'white',
               }}
               onClick={() => handleBinClick(bin)}
             >
