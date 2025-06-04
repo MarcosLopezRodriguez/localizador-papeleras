@@ -205,15 +205,25 @@ export default function App() {
           sx={{ minWidth: 200, marginRight: 2 }}
         />
         <FormControl size="small" sx={{ minWidth: 160 }}>
-          <InputLabel>Distrito</InputLabel>
-          <Select value={selectedDistrict} onChange={handleDistrictChange}>
+          <InputLabel id="district-label">Distrito</InputLabel>
+          <Select
+            labelId="district-label"
+            id="district-select"
+            value={selectedDistrict}
+            onChange={handleDistrictChange}
+          >
             <MenuItem value=""><em>Todos</em></MenuItem>
             {districts.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}
           </Select>
         </FormControl>
         <FormControl size="small" sx={{ minWidth: 160 }} disabled={!selectedDistrict}>
-          <InputLabel>Barrio</InputLabel>
-          <Select value={selectedBarrio} onChange={handleBarrioChange}>
+          <InputLabel id="barrio-label">Barrio</InputLabel>
+          <Select
+            labelId="barrio-label"
+            id="barrio-select"
+            value={selectedBarrio}
+            onChange={handleBarrioChange}
+          >
             <MenuItem value=""><em>Todos</em></MenuItem>
             {barrios.map(b => <MenuItem key={b} value={b}>{b}</MenuItem>)}
           </Select>
