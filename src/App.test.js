@@ -3,6 +3,20 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import App from './App';
 
+// Mock react-leaflet components to avoid ESM issues in Jest
+jest.mock('react-leaflet', () => {
+  const React = require('react');
+  return {
+    MapContainer: ({ children }) => <div>{children}</div>,
+    TileLayer: () => null,
+    Marker: ({ children }) => <div>{children}</div>,
+    Popup: ({ children }) => <div>{children}</div>,
+    useMap: jest.fn(),
+    useMapEvent: jest.fn(),
+    useMapEvents: jest.fn(),
+  };
+});
+
 // Mock data for contenedores.json
 const mockBinsData = [
   { 
@@ -102,7 +116,10 @@ describe('App Search Functionality', () => {
 
     // Simulate selecting "Centro" district to load relevant bins
     // This step is crucial because bins are loaded based on selectedDistrict
-    fireEvent.change(screen.getByLabelText(/Distrito/i), { target: { value: 'Centro' } });
+    const districtSelectInput = await screen.findByRole('combobox', { name: /Distrito/i });
+    fireEvent.mouseDown(districtSelectInput);
+    await waitFor(() => screen.getByText('Centro'));
+    fireEvent.click(screen.getByText('Centro'));
 
     // Wait for bins to be loaded for "Centro"
     await waitFor(() => {
@@ -143,14 +160,16 @@ describe('App Search Functionality', () => {
     render(<App />);
     
     // First, select a district and barrio to ensure filters are set
-    const districtSelect = screen.getByLabelText(/Distrito/i);
-    fireEvent.change(districtSelect, { target: { value: 'Retiro' } });
+    const districtSelect = await screen.findByRole('combobox', { name: /Distrito/i });
+    fireEvent.mouseDown(districtSelect);
+    await waitFor(() => screen.getByText('Retiro'));
+    fireEvent.click(screen.getByText('Retiro'));
     await waitFor(() => expect(screen.getByDisplayValue('Retiro')).toBeInTheDocument());
 
     // The barrio dropdown is enabled once a district is selected.
     // The barrios are populated based on the bins of the selected district.
     // "Avenida Real 45" is in "Retiro" and "JERÓNIMOS"
-    const barrioSelect = screen.getByLabelText(/Barrio/i);
+    const barrioSelect = await screen.findByRole('combobox', { name: /Barrio/i });
     await waitFor(() => fireEvent.mouseDown(barrioSelect)); // Open the select
     await waitFor(() => fireEvent.click(screen.getByText('JERÓNIMOS'))); // Select the barrio
     await waitFor(() => expect(screen.getByDisplayValue('JERÓNIMOS')).toBeInTheDocument());
