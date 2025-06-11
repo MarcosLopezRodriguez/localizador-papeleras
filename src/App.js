@@ -97,20 +97,32 @@ export default function App() {
     }
   }, [selectedBinId]);
 
-  const filteredBins = bins.filter(bin => {
+  // Create a map to store unique bins by address
+  const uniqueBinsMap = new Map();
+  
+  bins.forEach(bin => {
     const query = searchQuery.toLowerCase();
     const matchesSearchQuery = !query ||
       (bin.direccion && bin.direccion.toLowerCase().includes(query)) ||
       (bin.distrito && bin.distrito.toLowerCase().includes(query)) ||
       (bin.barrioNorm && bin.barrioNorm.toLowerCase().includes(query));
 
-    return (
+    const matchesFilters = 
       matchesSearchQuery &&
       (!selectedDistrict || bin.distrito === selectedDistrict) &&
       (!selectedBarrio || bin.barrioNorm === selectedBarrio) &&
-      (selectedTypes.length === 0 || (Array.isArray(bin.tipo) && bin.tipo.some(type => selectedTypes.includes(type))))
-    );
+      (selectedTypes.length === 0 || (Array.isArray(bin.tipo) && bin.tipo.some(type => selectedTypes.includes(type))));
+    
+    if (matchesFilters) {
+      // Only keep the first occurrence of each address
+      if (!uniqueBinsMap.has(bin.direccion)) {
+        uniqueBinsMap.set(bin.direccion, bin);
+      }
+    }
   });
+  
+  // Convert the map values back to an array
+  const filteredBins = Array.from(uniqueBinsMap.values());
 
   const getBinIconForList = (tipo) => {
     switch (tipo) {
