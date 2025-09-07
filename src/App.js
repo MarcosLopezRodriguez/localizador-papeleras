@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import './App.css';
-import BinList from './BinList';
 import { getBinIcon, typeLabels } from './binIcons';
-import { Button, Chip, Select, MenuItem, InputLabel, FormControl, Box, TextField } from '@mui/material';
-import { Nature, Description, LocalDrink, Delete, Recycling } from '@mui/icons-material';
+import { Chip, Select, MenuItem, InputLabel, FormControl, Box, TextField, OutlinedInput } from '@mui/material';
 
 const DEFAULT_CENTER = [40.416775, -3.70379];
 
@@ -99,7 +97,7 @@ export default function App() {
 
   // Create a map to store unique bins by address
   const uniqueBinsMap = new Map();
-  
+
   bins.forEach(bin => {
     const query = searchQuery.toLowerCase();
     const matchesSearchQuery = !query ||
@@ -107,12 +105,12 @@ export default function App() {
       (bin.distrito && bin.distrito.toLowerCase().includes(query)) ||
       (bin.barrioNorm && bin.barrioNorm.toLowerCase().includes(query));
 
-    const matchesFilters = 
+    const matchesFilters =
       matchesSearchQuery &&
       (!selectedDistrict || bin.distrito === selectedDistrict) &&
       (!selectedBarrio || bin.barrioNorm === selectedBarrio) &&
       (selectedTypes.length === 0 || (Array.isArray(bin.tipo) && bin.tipo.some(type => selectedTypes.includes(type))));
-    
+
     if (matchesFilters) {
       // Only keep the first occurrence of each address
       if (!uniqueBinsMap.has(bin.direccion)) {
@@ -120,33 +118,19 @@ export default function App() {
       }
     }
   });
-  
+
   // Convert the map values back to an array
   const filteredBins = Array.from(uniqueBinsMap.values());
 
-  const getBinIconForList = (tipo) => {
-    switch (tipo) {
-      case 'organica':
-        return { icon: <Nature />, color: '#8BC34A' };
-      case 'papel':
-        return { icon: <Description />, color: '#2196F3' };
-      case 'plastico':
-        return { icon: <Recycling />, color: '#FFC107' };
-      case 'resto':
-        return { icon: <Delete />, color: '#9E9E9E' };
-      case 'vidrio':
-        return { icon: <LocalDrink />, color: '#4CAF50' };
-      default:
-        return { icon: <Delete />, color: '#607D8B' };
-    }
-  };
-
+  // Enriquecer elementos de lista con el mismo icono/color por tipo
   const enhancedBins = filteredBins.map(bin => {
-    const { icon, color } = getBinIconForList(bin.tipo[0]);
+    const typeKey = (bin.tipo && bin.tipo[0]) || '';
+    const def = typeLabels[typeKey] || typeLabels.resto;
+    const IconComp = def.icon;
     return {
       ...bin,
-      icon,
-      color,
+      icon: <IconComp sx={{ fontSize: 20, color: '#fff' }} />,
+      color: def.color,
     };
   });
 
@@ -214,41 +198,90 @@ export default function App() {
           value={searchQuery}
           onChange={handleSearchChange}
           onKeyPress={handleAddressSearch}
-          sx={{ minWidth: 200, marginRight: 2 }}
+          sx={{
+            minWidth: 260,
+            mr: 2,
+            '& .MuiOutlinedInput-root': {
+              borderRadius: 28,
+              backgroundColor: '#fff',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
+              '& fieldset': { borderColor: 'transparent' },
+              '&:hover fieldset': { borderColor: '#bdbdbd' },
+              '&.Mui-focused fieldset': {
+                borderColor: '#1E88E5',
+                boxShadow: '0 0 0 3px rgba(30,136,229,0.15)'
+              }
+            }
+          }}
         />
-        <FormControl size="small" sx={{ minWidth: 160 }}>
+        <FormControl size="small" sx={{
+          minWidth: 160,
+          '& .MuiOutlinedInput-root': {
+            borderRadius: 28,
+            backgroundColor: '#fff',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.06)'
+          }
+        }}>
           <InputLabel id="district-label">Distrito</InputLabel>
           <Select
             labelId="district-label"
             id="district-select"
             value={selectedDistrict}
             onChange={handleDistrictChange}
+            input={<OutlinedInput label="Distrito" />}
           >
             <MenuItem value=""><em>Todos</em></MenuItem>
             {districts.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}
           </Select>
         </FormControl>
-        <FormControl size="small" sx={{ minWidth: 160 }} disabled={!selectedDistrict}>
+        <FormControl size="small" sx={{
+          minWidth: 180,
+          '& .MuiOutlinedInput-root': {
+            borderRadius: 28,
+            backgroundColor: '#fff',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.06)'
+          }
+        }} disabled={!selectedDistrict}>
           <InputLabel id="barrio-label">Barrio</InputLabel>
           <Select
             labelId="barrio-label"
             id="barrio-select"
             value={selectedBarrio}
             onChange={handleBarrioChange}
+            input={<OutlinedInput label="Barrio" />}
           >
             <MenuItem value=""><em>Todos</em></MenuItem>
             {barrios.map(b => <MenuItem key={b} value={b}>{b}</MenuItem>)}
           </Select>
         </FormControl>
         <Box className="filters-bar">
-          {Object.keys(typeLabels).map(type => (
-            <Chip
-              key={type}
-              label={typeLabels[type]?.label?.toUpperCase() || type.toUpperCase()}
-              color={selectedTypes.includes(type) ? 'primary' : 'default'}
-              onClick={() => handleTypeToggle(type)}
-            />
-          ))}
+          {Object.keys(typeLabels).map(type => {
+            const def = typeLabels[type];
+            const selected = selectedTypes.includes(type);
+            const IconComp = def.icon;
+            return (
+              <Chip
+                key={type}
+                icon={<IconComp sx={{ fontSize: 20 }} />}
+                label={def.label.toUpperCase()}
+                onClick={() => handleTypeToggle(type)}
+                variant={selected ? 'filled' : 'outlined'}
+                sx={{
+                  borderWidth: 2,
+                  borderColor: def.color,
+                  color: selected ? '#fff' : def.color,
+                  backgroundColor: selected ? def.color : 'transparent',
+                  '& .MuiChip-icon': {
+                    color: selected ? '#fff' : def.color
+                  },
+                  fontWeight: 700,
+                  borderRadius: 22,
+                  px: 1,
+                  boxShadow: selected ? '0 4px 14px rgba(0,0,0,0.12)' : 'none'
+                }}
+              />
+            );
+          })}
         </Box>
       </div>
       <div className="main-layout">
@@ -266,16 +299,27 @@ export default function App() {
                 borderRadius: '8px',
                 boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                 cursor: 'pointer',
-                backgroundColor: selectedBinId === bin.id ? '#f0f8ff' : 
-                                 (searchQuery && (
-                                   (bin.direccion && bin.direccion.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                                   (bin.distrito && bin.distrito.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                                   (bin.barrioNorm && bin.barrioNorm.toLowerCase().includes(searchQuery.toLowerCase()))
-                                 )) ? 'lightyellow' : 'white',
+                backgroundColor: selectedBinId === bin.id ? '#f0f8ff' :
+                  (searchQuery && (
+                    (bin.direccion && bin.direccion.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                    (bin.distrito && bin.distrito.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                    (bin.barrioNorm && bin.barrioNorm.toLowerCase().includes(searchQuery.toLowerCase()))
+                  )) ? 'lightyellow' : 'white',
               }}
               onClick={() => handleBinClick(bin)}
             >
-              <div className="bin-icon" style={{ color: bin.color, fontSize: '24px', marginRight: '10px' }}>{bin.icon}</div>
+              <div className="bin-icon" style={{
+                color: '#fff',
+                background: bin.color,
+                width: 36,
+                height: 36,
+                borderRadius: 10,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: 12,
+                boxShadow: '0 4px 10px rgba(0,0,0,0.12)'
+              }}>{bin.icon}</div>
               <div className="bin-details" style={{ flex: 1 }}>
                 <h3 style={{ margin: '0 0 5px', fontSize: '16px', fontWeight: 'bold', color: '#333' }}>{bin.direccion}</h3>
                 <p style={{ margin: '0', fontSize: '14px', color: '#666' }}>Distrito: {bin.distrito} | Barrio: {bin.barrioNorm}</p>
